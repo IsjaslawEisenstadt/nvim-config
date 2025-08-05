@@ -49,5 +49,3 @@ require('lazy').setup('plugins', {
 		},
 	},
 })
-
-vim.fn['homerow#JKLsemi']()

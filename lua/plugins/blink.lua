@@ -1,5 +1,6 @@
 return { -- Autocompletion
 	'saghen/blink.cmp',
+	enabled = true,
 	event = 'VimEnter',
 	version = '1.*',
 	dependencies = {

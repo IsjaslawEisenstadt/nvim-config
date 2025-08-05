@@ -1,3 +1,25 @@
+if vim.g.neovide then
+	vim.o.guifont = 'FiraCode Nerd Font:h10'
+	vim.opt.linespace = 1
+
+	vim.g.neovide_padding_top = 5
+	vim.g.neovide_padding_bottom = 0
+	vim.g.neovide_padding_right = 5
+	vim.g.neovide_padding_left = 5
+
+	vim.g.neovide_opacity = 0.55
+	vim.g.neovide_normal_opacity = 1.0
+
+	vim.g.neovide_title_background_color = '#22272E'
+	vim.g.neovide_title_text_color = 'white'
+	vim.g.neovide_window_blurred = true
+
+	vim.g.neovide_cursor_animation_length = 0.150
+	vim.g.neovide_cursor_trail_size = 0.2
+	vim.g.neovide_scroll_animation_length = 0.1
+	vim.g.neovide_scroll_animation_far_lines = 0
+end
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -23,6 +45,15 @@ vim.o.shiftwidth = 4
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
+
+vim.o.guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:ver25-blinkon500-blinkoff500-TermCursor'
+
+vim.o.shell = 'pwsh.exe'
+vim.o.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command $PSStyle.OutputRendering = 'PlainText';"
+vim.o.shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+vim.o.shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+vim.o.shellquote = ''
+vim.o.shellxquote = ''
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
@@ -69,8 +100,8 @@ vim.o.splitbelow = true
 --  It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
 --   See `:help lua-options`
 --   and `:help lua-options-guide`
-vim.o.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.o.list = false
+vim.opt.listchars = { trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
@@ -87,3 +118,21 @@ vim.o.scrolloff = 20
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
 vim.o.confirm = true
+
+vim.diagnostic.config {
+	virtual_text = {
+		severity = nil, -- show all severities
+		source = 'if_many',
+	},
+	signs = true,
+	underline = true,
+	update_in_insert = true, -- ensure updates happen during insert
+	severity_sort = true,
+}
+
+-- Edgy:
+-- views can only be fully collapsed with the global statusline
+vim.opt.laststatus = 3
+-- Default splitting will cause your main splits to jump when opening an edgebar.
+-- To prevent this, set `splitkeep` to either `screen` or `topline`.
+vim.opt.splitkeep = 'screen'

@@ -1,5 +1,6 @@
 return { -- Collection of various small independent plugins/modules
 	'echasnovski/mini.nvim',
+	enabled = true,
 	config = function()
 		-- Better Around/Inside textobjects
 		--
@@ -30,8 +31,7 @@ return { -- Collection of various small independent plugins/modules
 		statusline.section_location = function()
 			return '%2l:%-2v'
 		end
-
-		-- ... and there is more!
-		--  Check out: https://github.com/echasnovski/mini.nvim
+		require('mini.move').setup {}
+		-- require('mini.animate').setup {}
 	end,
 }

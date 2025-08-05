@@ -1,5 +1,6 @@
 return { -- Fuzzy Finder (files, lsp, etc)
 	'nvim-telescope/telescope.nvim',
+	enabled = true,
 	event = 'VimEnter',
 	dependencies = {
 		'nvim-lua/plenary.nvim',
@@ -44,6 +45,22 @@ return { -- Fuzzy Finder (files, lsp, etc)
 		-- [[ Configure Telescope ]]
 		-- See `:help telescope` and `:help telescope.setup()`
 		require('telescope').setup {
+			pickers = {
+				help_tags = {
+					mappings = {
+						i = {
+							['<CR>'] = 'file_vsplit',
+						},
+					},
+				},
+			},
+			defaults = {
+				mappings = {
+					n = {
+						['<C-A-Insert>'] = require('telescope.actions').close,
+					},
+				},
+			},
 			-- You can put your default mappings / updates / etc. in here
 			--  All the info you're looking for is in `:help telescope.setup()`
 			--
