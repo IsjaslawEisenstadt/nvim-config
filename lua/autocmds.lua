@@ -33,7 +33,7 @@ end
 
 local function get_buf_type(buf)
 	local bufname = vim.api.nvim_buf_get_name(buf)
-	if vim.bo[buf].buftype == 'help' then
+	if vim.bo[buf].buftype == 'help' or vim.bo[buf].filetype == 'help' then
 		return 'help'
 	end
 	if bufname:match '%.h$' or bufname:match '%.hpp$' then
