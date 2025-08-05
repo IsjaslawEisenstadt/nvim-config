@@ -12,8 +12,6 @@ local layout = {
 -- Saves previous buffers for all windows before rerouting
 local window_prev_bufs = {}
 
-local event_lock = false
-
 local function is_buffer_already_opened(target_win, buf)
 	for _, win in ipairs(vim.api.nvim_list_wins()) do
 		if win ~= target_win and vim.api.nvim_win_get_buf(win) == buf then
@@ -25,11 +23,6 @@ end
 
 local function scan_current_win_bufs()
 	print 'starting WinEnter - caching window bufs'
-
-	if event_lock then
-		print 'encountered event lock in BufWinEnter - aborting!'
-		return
-	end
 
 	local current_window_bufs = {}
 	for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -60,13 +53,6 @@ local function setup_autocmds()
 		callback = function(args)
 			print 'starting BufWinEnter'
 
-			if event_lock then
-				print 'encountered event lock in BufWinEnter - aborting!'
-				return
-			end
-
-			event_lock = true
-
 			local bufnr = args.buf
 			local bufname = vim.api.nvim_buf_get_name(bufnr)
 
@@ -83,11 +69,7 @@ local function setup_autocmds()
 			if buf_type == 'help' then
 				if not layout.help or not vim.api.nvim_win_is_valid(layout.help) then
 					local split_target = layout.headers and vim.api.nvim_win_is_valid(layout.headers) and layout.headers or layout.main
-					if split_target then
-						vim.api.nvim_set_current_win(split_target)
-					end
-					vim.cmd 'vsplit'
-					layout.help = vim.api.nvim_get_current_win()
+					layout.help = vim.api.nvim_open_win(bufnr, true, { win = split_target, noautocmd = true, vertical = true, split = 'right' })
 					print('setting layout.help to: ' .. layout.help)
 					vim.cmd 'wincmd =' -- balance all windows
 				end
@@ -95,30 +77,22 @@ local function setup_autocmds()
 			elseif buf_type == 'headers' then
 				if not layout.headers or not vim.api.nvim_win_is_valid(layout.headers) then
 					if layout.main and vim.api.nvim_win_is_valid(layout.main) then
-						vim.api.nvim_set_current_win(layout.main)
-						vim.cmd 'vsplit'
+						layout.headers = vim.api.nvim_open_win(bufnr, true, { win = layout.main, noautocmd = true, vertical = true, split = 'right' })
+					elseif layout.help and vim.api.nvim_win_is_valid(layout.help) then
+						layout.headers = vim.api.nvim_open_win(bufnr, true, { win = layout.help, noautocmd = true, vertical = true, split = 'left' })
+					else
+						layout.headers = vim.api.nvim_get_current_win()
 					end
-					layout.headers = vim.api.nvim_get_current_win()
 					print('setting layout.headers to: ' .. layout.headers)
 				end
 				target_win = layout.headers
 			elseif buf_type == 'main' then
 				if not layout.main or not vim.api.nvim_win_is_valid(layout.main) then
 					if layout.headers and vim.api.nvim_win_is_valid(layout.headers) then
-						vim.api.nvim_set_current_win(layout.headers)
-						vim.cmd 'vsplit'
-						local prev_header_buf = window_prev_bufs[layout.headers]
-						local new_win = vim.api.nvim_get_current_win()
-						layout.main = layout.headers
-						layout.headers = new_win
-						window_prev_bufs[layout.headers] = prev_header_buf
+						layout.main = vim.api.nvim_open_win(bufnr, true, { win = layout.main, noautocmd = true, vertical = true, split = 'left' })
 						print('splitting headers and setting layout.main to: ' .. layout.main)
 					elseif layout.help and vim.api.nvim_win_is_valid(layout.help) then
-						vim.api.nvim_set_current_win(layout.help)
-						vim.cmd 'vsplit'
-						local new_win = vim.api.nvim_get_current_win()
-						layout.main = layout.help
-						layout.help = new_win
+						layout.main = vim.api.nvim_open_win(bufnr, true, { win = layout.main, noautocmd = true, vertical = true, split = 'left' })
 						print('splitting help and setting layout.main to: ' .. layout.main)
 					else
 						layout.main = vim.api.nvim_get_current_win()
@@ -131,46 +105,40 @@ local function setup_autocmds()
 
 			if not target_win then
 				print 'no valid target_win; aborting!'
-				event_lock = false
 				return
 			end
 
 			print('target_win found: ' .. target_win)
 
-			print 'scheduling cleanup'
+			print 'starting cleanup'
+			print('cleanup target window: ' .. target_win .. ', target buf: ' .. bufnr)
 
-			-- Schedule cleanup
-			vim.schedule(function()
-				print 'starting cleanup'
-				print('cleanup target window: ' .. target_win .. ', target buf: ' .. bufnr)
-				print 'listing current window_prev_bufs...'
-				for win_, buf_ in pairs(window_prev_bufs) do
-					print('win: ' .. win_ .. ', buf: ' .. buf_)
-				end
-				print 'going through existing windows...'
-				for _, win in ipairs(vim.api.nvim_list_wins()) do
-					local win_buf = vim.api.nvim_win_get_buf(win)
-					print('win: ' .. win .. ', buf: ' .. win_buf)
-					if win ~= target_win and win_buf == bufnr then
-						print 'found window that uses a reserved buffer...'
-						local prev_buf = window_prev_bufs[win]
-						if prev_buf and vim.api.nvim_buf_is_valid(prev_buf) and not is_buffer_already_opened(win, prev_buf) then
-							print('restoring window [' .. win .. '] current buf [' .. win_buf .. '] to prev buf [' .. prev_buf .. ']')
-							vim.api.nvim_win_set_buf(win, prev_buf)
-						else
-							print('closing window [' .. win .. '] current buf [' .. win_buf .. ']')
-							vim.api.nvim_win_close(win, true)
-						end
+			print 'listing current window_prev_bufs...'
+			for win_, buf_ in pairs(window_prev_bufs) do
+				print('win: ' .. win_ .. ', buf: ' .. buf_)
+			end
+			print 'going through existing windows...'
+			for _, win in ipairs(vim.api.nvim_list_wins()) do
+				local win_buf = vim.api.nvim_win_get_buf(win)
+				print('win: ' .. win .. ', buf: ' .. win_buf)
+				if win ~= target_win and win_buf == bufnr then
+					print 'found window that uses a reserved buffer...'
+					local prev_buf = window_prev_bufs[win]
+					if prev_buf and vim.api.nvim_buf_is_valid(prev_buf) and not is_buffer_already_opened(win, prev_buf) then
+						print('restoring window [' .. win .. '] current buf [' .. win_buf .. '] to prev buf [' .. prev_buf .. ']')
+						vim.api.nvim_win_set_buf(win, prev_buf)
+					else
+						print('closing window [' .. win .. '] current buf [' .. win_buf .. ']')
+						vim.api.nvim_win_close(win, true)
 					end
 				end
-				if target_win and vim.api.nvim_win_is_valid(target_win) and vim.api.nvim_buf_is_valid(bufnr) then
-					vim.api.nvim_set_current_win(target_win)
-					vim.cmd('buffer ' .. bufnr)
-				end
-				print 'ending cleanup'
-
-				event_lock = false
-			end)
+			end
+			if target_win and vim.api.nvim_win_is_valid(target_win) and vim.api.nvim_buf_is_valid(bufnr) then
+				print('focusing target win: ' .. target_win .. ', with buffer: ' .. bufnr)
+				vim.api.nvim_set_current_win(target_win)
+				vim.cmd('buffer ' .. bufnr)
+			end
+			print 'ending cleanup'
 		end,
 	})
 end
