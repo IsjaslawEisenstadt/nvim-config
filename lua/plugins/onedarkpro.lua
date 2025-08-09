@@ -43,7 +43,7 @@ local bg                       = "#282c34"
 
 return {
 	'olimorris/onedarkpro.nvim',
-	enabled =true,
+	enabled = true,
 	lazy = false,
 	priority = 1000,
 	config = function()

@@ -1,12 +1,9 @@
--- [[ Basic Keymaps ]]
---  See `:help vim.keymap.set()`
-
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = '[Q]uickfix list' })
 
 vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 vim.keymap.set('n', '<C-A-Insert>', '')
@@ -82,9 +79,9 @@ vim.keymap.set({ 'n', 'x' }, '<leader>ca', function()
 	require('tiny-code-action').code_action {}
 end, { noremap = true, silent = true })
 
-vim.keymap.set('n', '<leader>wt', '<cmd>NoNeckPain<cr>', { desc = 'Toggle NoNeckPain', silent = true })
-vim.keymap.set('n', '<leader>wr', '<cmd>NoNeckPainResize 180<cr>', { desc = 'Resize NoNeckPain', silent = true })
-vim.keymap.set('n', '<leader>wi', '<cmd>NoNeckPainWidthUp<cr>', { desc = 'WidthUp NoNeckPain', silent = true })
-vim.keymap.set('n', '<leader>wo', '<cmd>NoNeckPainWidthDown<cr>', { desc = 'WidthDown NoNeckPain', silent = true })
-vim.keymap.set('n', '<leader>wh', '<cmd>NoNeckPainToggleLeftSide<cr>', { desc = 'ToggleLeftSide NoNeckPain', silent = true })
-vim.keymap.set('n', '<leader>wl', '<cmd>NoNeckPainToggleRightSide<cr>', { desc = 'ToggleRightSide NoNeckPain', silent = true })
+-- vim.keymap.set('n', '<leader>wt', '<cmd>NoNeckPain<cr>', { desc = 'Toggle NoNeckPain', silent = true })
+-- vim.keymap.set('n', '<leader>wr', '<cmd>NoNeckPainResize 180<cr>', { desc = 'Resize NoNeckPain', silent = true })
+-- vim.keymap.set('n', '<leader>wi', '<cmd>NoNeckPainWidthUp<cr>', { desc = 'WidthUp NoNeckPain', silent = true })
+-- vim.keymap.set('n', '<leader>wo', '<cmd>NoNeckPainWidthDown<cr>', { desc = 'WidthDown NoNeckPain', silent = true })
+-- vim.keymap.set('n', '<leader>wh', '<cmd>NoNeckPainToggleLeftSide<cr>', { desc = 'ToggleLeftSide NoNeckPain', silent = true })
+-- vim.keymap.set('n', '<leader>wl', '<cmd>NoNeckPainToggleRightSide<cr>', { desc = 'ToggleRightSide NoNeckPain', silent = true })

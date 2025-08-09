@@ -20,6 +20,8 @@ if vim.g.neovide then
 	vim.g.neovide_scroll_animation_far_lines = 0
 end
 
+-- vim.g.OmniSharp_server_use_mono = 1
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -42,6 +44,8 @@ vim.o.tabstop = 4
 vim.o.softtabstop = 4
 vim.o.expandtab = false
 vim.o.shiftwidth = 4
+
+vim.o.winborder = 'solid'
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'

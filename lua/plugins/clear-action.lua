@@ -1,5 +1,5 @@
 return {
 	'luckasRanarison/clear-action.nvim',
-	enabled = true,
+	enabled = false,
 	opts = {},
 }
