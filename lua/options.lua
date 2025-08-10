@@ -7,34 +7,35 @@ if vim.g.neovide then
 	vim.g.neovide_padding_right = 5
 	vim.g.neovide_padding_left = 5
 
-	vim.g.neovide_opacity = 0.55
+	-- vim.g.neovide_opacity = 0.55
 	vim.g.neovide_normal_opacity = 1.0
 
-	vim.g.neovide_title_background_color = '#22272E'
-	vim.g.neovide_title_text_color = 'white'
-	vim.g.neovide_window_blurred = true
+	-- vim.g.neovide_title_background_color = '#22272E'
+	-- vim.g.neovide_title_text_color = 'white'
+	-- vim.g.neovide_window_blurred = true
 
 	vim.g.neovide_cursor_animation_length = 0.150
 	vim.g.neovide_cursor_trail_size = 0.2
 	vim.g.neovide_scroll_animation_length = 0.1
 	vim.g.neovide_scroll_animation_far_lines = 0
+
+	vim.g.neovide_floating_shadow = true
+	vim.g.neovide_floating_z_height = 5
+	vim.g.neovide_light_angle_degrees = 45
+	vim.g.neovide_light_radius = 5
+
+	vim.g.neovide_floating_corner_radius = 0.0
+
+	vim.g.neovide_hide_mouse_when_typing = true
+
+	vim.g.neovide_underline_stroke_scale = 3.0
 end
 
--- vim.g.OmniSharp_server_use_mono = 1
-
--- Set <space> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
-
--- [[ Setting options ]]
--- See `:help vim.o`
--- NOTE: You can change these options as you wish!
---  For more options, you can see `:help option-list`
 
 -- Line numbers
 vim.o.number = true
@@ -90,7 +91,8 @@ vim.o.signcolumn = 'yes'
 vim.o.updatetime = 250
 
 -- Decrease mapped sequence wait time
-vim.o.timeoutlen = 300
+vim.o.timeoutlen = 1000
+vim.o.ttimeoutlen = 0
 
 -- Configure how new splits should be opened
 vim.o.splitright = true
@@ -123,20 +125,15 @@ vim.o.scrolloff = 20
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
-vim.diagnostic.config {
-	virtual_text = {
-		severity = nil, -- show all severities
-		source = 'if_many',
-	},
-	signs = true,
-	underline = true,
-	update_in_insert = true, -- ensure updates happen during insert
-	severity_sort = true,
-}
+vim.o.equalalways = true
+vim.o.eadirection = "both"
 
--- Edgy:
--- views can only be fully collapsed with the global statusline
-vim.opt.laststatus = 3
--- Default splitting will cause your main splits to jump when opening an edgebar.
--- To prevent this, set `splitkeep` to either `screen` or `topline`.
-vim.opt.splitkeep = 'screen'
+-- when/where to show the statusline
+-- 0: never
+-- 1: only if there are at least two windows
+-- 2: always
+-- 3: always and ONLY the last window
+vim.o.laststatus = 2
+
+-- vim.o.ruler = true
+vim.opt.whichwrap:append "<>[]hl"

@@ -1,6 +1,6 @@
 return {
 	'rachartier/tiny-inline-diagnostic.nvim',
-	enabled = true,
+	enabled = false,
 	event = 'VeryLazy', -- Or `LspAttach`
 	priority = 1000, -- needs to be loaded in first
 	config = function()
@@ -30,20 +30,19 @@ return {
 				-- Use "None" or a hexadecimal color (#RRGGBB) to blend with another color
 				mixing_color = 'None',
 			},
-			signs = {
-				-- left = '',
-				left = ' ',
-				-- right = '',
-				right = ' ',
-				diag = '●',
-				arrow = '    ',
-				up_arrow = '    ',
-				vertical = ' │',
-				vertical_end = ' └',
-			},
-			blend = {
-				factor = 0.22,
-			},
+			-- signs = {
+			-- 	left = '',
+			-- 	right = '',
+			-- 	-- right = ' ',
+			-- 	diag = '●',
+			-- 	arrow = '    ',
+			-- 	up_arrow = '    ',
+			-- 	vertical = ' │',
+			-- 	vertical_end = ' └',
+			-- },
+			-- blend = {
+			-- 	factor = 0.22,
+			-- },
 			options = {
 				-- Display the source of the diagnostic (e.g., basedpyright, vsserver, lua_ls etc.)
 				show_source = {
@@ -156,7 +155,7 @@ return {
 				-- You should not change this unless the plugin does not work with your configuration
 				overwrite_events = nil,
 			},
-			disabled_ft = {}, -- List of filetypes to disable the plugin
+			disabled_ft = {},                    -- List of filetypes to disable the plugin
 		}
 		vim.diagnostic.config { virtual_text = false } -- Only if needed in your configuration, if you already have native LSP diagnostics
 	end,

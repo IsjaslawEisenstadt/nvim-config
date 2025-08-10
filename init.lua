@@ -6,6 +6,8 @@ require 'autocmds'
 
 -- require 'win_manager'
 
+vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46_cache/"
+
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
@@ -30,6 +32,10 @@ require('lazy').setup('plugins', {
 		icons = {}
 	},
 })
+
+for _, v in ipairs(vim.fn.readdir(vim.g.base46_cache)) do
+	dofile(vim.g.base46_cache .. v)
+end
 
 -- local function switch_source_header(bufnr)
 --   local method_name = 'textDocument/switchSourceHeader'
@@ -127,5 +133,28 @@ vim.lsp.config("roslyn", {
 		"--extensionLogDirectory=" .. vim.fs.dirname(vim.lsp.get_log_path()),
 		"--stdio",
 	},
-	-- Add other options here
+	settings = {
+		["csharp|inlay_hints"] = {
+			csharp_enable_inlay_hints_for_implicit_object_creation = true,
+			csharp_enable_inlay_hints_for_implicit_variable_types = true,
+		},
+		["csharp|code_lens"] = {
+			dotnet_enable_references_code_lens = true,
+		},
+	},
+})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+	callback = function(args)
+		local bufnr = args.buf
+		local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+		if client and client:supports_method 'textDocument/codeLens' then
+			vim.lsp.codelens.refresh()
+			vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
+				buffer = bufnr,
+				callback = vim.lsp.codelens.refresh,
+			})
+		end
+	end,
 })
