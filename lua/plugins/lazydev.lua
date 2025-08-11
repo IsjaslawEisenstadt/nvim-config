@@ -1,5 +1,4 @@
-return {
-	-- adds neovim lua definitions to LSP
+return { -- adds neovim lua definitions to LSP
 	'folke/lazydev.nvim',
 	enabled = true,
 	ft = 'lua',

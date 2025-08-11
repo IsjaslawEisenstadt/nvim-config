@@ -60,12 +60,31 @@ return {
 			DiagnosticUnderlineInfo  = { underline = false, undercurl = true, sp = "cyan" },
 			DiagnosticUnderlineHint  = { underline = false, undercurl = true, sp = "blue" },
 			DiagnosticUnderlineOk    = { underline = false, undercurl = true, sp = "green" },
+
+			NvDashButton1            = { fg = 'green' },
+			NvDashButton2            = { fg = 'cyan' },
+			NvDashButton3            = { fg = 'blue' },
+			NvDashButton4            = { fg = 'folder_bg' },
 		},
 		hl_override = {
+			NvDashFooter = { fg = 'pmenu_bg' },
+
+			-- NvDashButton1 = { fg = 'green' },
+			-- NvDashButton  = { fg = 'nord_blue' },
+			-- NvDashButton3 = { fg = 'teal' },
+			-- NvDashButton4 = { fg = 'blue' },
 			-- Comment      = { italic = true },
 			-- ["@comment"] = { italic = true },
 		},
-		integrations = {},
+		integrations = {
+			'telescope',
+			'tiny-inline-diagnostic',
+			'todo',
+			'treesitter',
+			'whichkey',
+			--'blink',
+			-- 'cmp',
+		},
 		changed_themes = {},
 		transparency = false,
 		theme_toggle = { "onedark", "kanagawa" },
@@ -73,8 +92,8 @@ return {
 
 	ui = {
 		cmp = {
-			icons_left = false, -- only for non-atom styles!
-			style = "default", -- default/flat_light/flat_dark/atom/atom_colored
+			icons_left = true, -- only for non-atom styles!
+			style = "flat_light", -- default/flat_light/flat_dark/atom/atom_colored
 			abbr_maxwidth = 60,
 			-- for tailwind, css lsp etc
 			format_colors = { lsp = true, icon = "󱓻" },
@@ -105,29 +124,14 @@ return {
 	nvdash = {
 		load_on_startup = true,
 		header = {},
-		-- header = {
-		-- 	"                      ",
-		-- 	"  ▄▄         ▄ ▄▄▄▄▄▄▄",
-		-- 	"▄▀███▄     ▄██ █████▀ ",
-		-- 	"██▄▀███▄   ███        ",
-		-- 	"███  ▀███▄ ███        ",
-		-- 	"███    ▀██ ███        ",
-		-- 	"███      ▀ ███        ",
-		-- 	"▀██ █████▄▀█▀▄██████▄ ",
-		-- 	"  ▀ ▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀",
-		-- 	"                      ",
-		-- 	"  Powered By  eovim ",
-		-- 	"                      ",
-		-- },
 
 		buttons = {
-			{ txt = "  Workspaces ", keys = "w", cmd = "Telescope workspaces" },
-			{ txt = "  Files", keys = "f", cmd = "Telescope find_files" },
-			{ txt = "  Recent", keys = ".", cmd = "Telescope oldfiles" },
-			{ txt = "󱥚  Themes", keys = "t", cmd = ":lua require('nvchad.themes').open()" },
-			-- { txt = "  Mappings", keys = "ch", cmd = "NvCheatsheet" },
+			{ txt = "  Workspaces ", keys = "w", cmd = "Telescope workspaces", hl = 'NvDashButton1' },
+			{ txt = "  Files", keys = "f", cmd = "Telescope find_files", hl = 'NvDashButton2' },
+			{ txt = "  Recent", keys = ".", cmd = "Telescope oldfiles", hl = 'NvDashButton3' },
+			{ txt = "󱥚  Themes", keys = "t", cmd = ":lua require('nvchad.themes').open()", hl = 'NvDashButton4' },
 
-			{ txt = "─", hl = "NvDashFooter", no_gap = true, rep = true },
+			-- { txt = "─", hl = "NvDashFooter", no_gap = true, rep = true },
 
 			{
 				txt = function()
@@ -136,10 +140,25 @@ return {
 					return "  Loaded " .. stats.loaded .. "/" .. stats.count .. " plugins in " .. ms
 				end,
 				hl = "NvDashFooter",
-				no_gap = true,
+				-- no_gap = true,
 			},
 
-			{ txt = "─", hl = "NvDashFooter", no_gap = true, rep = true },
+			-- {
+			-- 	-- txt = 'www',
+			-- 	txt = function()
+			-- 		local val = require('workspaces').get()[1]
+			-- 		if val ~= nil then
+			-- 			return val.name
+			-- 		end
+			-- 		return ''
+			-- 	end,
+			-- 	keys = "g",
+			-- 	cmd = "Telescope help_tags",
+			-- 	no_gap = true,
+			-- 	-- hl = 'NvDashButton4'
+			-- },
+
+			-- { txt = "─", hl = "NvDashFooter", no_gap = true, rep = true },
 		},
 	},
 

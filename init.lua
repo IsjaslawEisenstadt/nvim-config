@@ -4,6 +4,8 @@ require 'keymaps'
 
 require 'autocmds'
 
+require 'usercmds'
+
 -- require 'win_manager'
 
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46_cache/"

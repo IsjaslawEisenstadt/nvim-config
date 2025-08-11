@@ -137,3 +137,5 @@ vim.o.laststatus = 2
 
 -- vim.o.ruler = true
 vim.opt.whichwrap:append "<>[]hl"
+
+-- vim.o.cmdheight = 30

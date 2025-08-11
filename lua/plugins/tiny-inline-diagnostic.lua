@@ -1,10 +1,10 @@
 return {
 	'rachartier/tiny-inline-diagnostic.nvim',
-	enabled = false,
+	enabled = true,
 	event = 'VeryLazy', -- Or `LspAttach`
 	priority = 1000, -- needs to be loaded in first
 	config = function()
-		vim.api.nvim_set_hl(0, 'CursorLine', { bg = 'None' })
+		-- vim.api.nvim_set_hl(0, 'CursorLine', { bg = 'None' })
 		require('tiny-inline-diagnostic').setup {
 			-- Style preset for diagnostic messages
 			-- Available options:

@@ -11,20 +11,7 @@
 -- 	end,
 -- })
 
-vim.api.nvim_create_user_command("Float", function(opts)
-	local buf = vim.api.nvim_create_buf(false, true)
-	vim.api.nvim_open_win(buf, true, {
-		relative = 'editor',
-		width = math.floor(vim.o.columns * 0.8),
-		height = math.floor(vim.o.lines * 0.8),
-		row = math.floor(vim.o.lines * 0.1),
-		col = math.floor(vim.o.columns * 0.1),
-		style = 'minimal',
-		border = 'rounded',
-	})
-	vim.cmd(opts.args)
-end, { nargs = "+" })
-
+-- Auto equalize window sizes whenever vim is resized
 vim.api.nvim_create_autocmd("VimResized", {
 	callback = function()
 		vim.cmd("wincmd =")

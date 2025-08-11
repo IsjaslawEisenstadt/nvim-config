@@ -1,5 +1,6 @@
 return {
 	"seblyng/roslyn.nvim",
+	enabled = true,
 	opts = {
 		-- "auto" | "roslyn" | "off"
 		--

@@ -1,188 +1,254 @@
--- -------------------------
--- Eviline config for lualine
--- Author: shadmansaleh
--- Credit: glepnir
--- MIT license, see LICENSE for more details.
--- -------------------------
-
--- -------------------------
--- Implements Kanagawa
--- Reformatted sections
--- -------------------------
-
 return {
 	'nvim-lualine/lualine.nvim',
-	enabled = false,
+	enabled = true,
+	order = 600,
+	dependencies = { 'nvim-tree/nvim-web-devicons' },
 	config = function()
-		local kanagawa = require 'kanagawa.colors'
-		local palette_colors = kanagawa.setup().palette
-		local transparentbg = nil
-
-		local conditions = {
-			buffer_not_empty = function()
-				return vim.fn.empty(vim.fn.expand '%:t') ~= 1
-			end,
-			hide_in_width = function()
-				return vim.fn.winwidth(0) > 80
-			end,
-			check_git_workspace = function()
-				local filepath = vim.fn.expand '%:p:h'
-				local gitdir = vim.fn.finddir('.git', filepath .. ';')
-				return gitdir and #gitdir > 0 and #gitdir < #filepath
-			end,
-		}
-
-		local config = {
-			options = {
-				component_separators = '',
-				section_separators = '',
-				theme = {
-					normal = { c = { fg = palette_colors.sumiInk0 or '#ffffff', bg = transparentbg } },
-					inactive = { c = { fg = palette_colors.sumiInk0 or '#ffffff', bg = transparentbg } },
-				},
-			},
-			sections = {
-				-- these are to remove the defaults
-				lualine_a = {},
-				lualine_b = {},
-				lualine_y = {},
-				lualine_z = {},
-				-- These will be filled later
-				lualine_c = {},
-				lualine_x = {},
-			},
-			inactive_sections = {
-				-- these are to remove the defaults
-				lualine_a = {},
-				lualine_b = {},
-				lualine_y = {},
-				lualine_z = {},
-				lualine_c = {},
-				lualine_x = {},
-			},
-		}
-
-		local mode_map = {
-			['NORMAL'] = 'N',
-			['O-PENDING'] = 'N?',
-			['INSERT'] = 'I',
-			['VISUAL'] = 'V',
-			['V-BLOCK'] = 'VB',
-			['V-LINE'] = 'VL',
-			['V-REPLACE'] = 'VR',
-			['REPLACE'] = 'R',
-			['COMMAND'] = '!',
-			['SHELL'] = 'SH',
-			['TERMINAL'] = 'T',
-			['EX'] = 'X',
-			['S-BLOCK'] = 'SB',
-			['S-LINE'] = 'SL',
-			['SELECT'] = 'S',
-			['CONFIRM'] = 'Y?',
-			['MORE'] = 'M',
-		}
-
-		local function ins_left(component)
-			table.insert(config.sections.lualine_c, component)
-		end
-
-		local function ins_right(component)
-			table.insert(config.sections.lualine_x, component)
-		end
-
-		-- left items
-
-		ins_left {
-			function()
-				return '▊'
-			end,
-			color = { fg = palette_colors.oldWhite },
-			padding = { left = 0, right = 1 },
-		}
-
-		ins_left {
-			'mode',
-			fmt = function(s)
-				return mode_map[s] or s
-			end,
-			gui = 'bold',
-			color = function()
-				local mode_color = {
-					n = palette_colors.oldWhite,
-					i = palette_colors.fujiWhite,
-					v = palette_colors.springGreen,
-					[''] = palette_colors.springBlue,
-					V = palette_colors.autumnGreen,
+		vim.g.kanagawa_lualine_bold = true
+		-- local spinners = { "", "󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥", "" }
+		-- local lsp = (vim.o.columns > 100 and "   LSP ~ " .. client.name .. " ") or "   LSP "
+		-- local file_icon = "󰈚"
+		-- local cursor = "%#St_pos_sep#" .. sep_l .. "%#St_pos_icon# %#St_pos_text# %l/%v "
+		-- local folder_icon = "%#St_cwd_icon#" .. "󰉋 "
+		local function diff_source()
+			local gitsigns = vim.b.gitsigns_status_dict
+			if gitsigns then
+				return {
+					added = gitsigns.added,
+					modified = gitsigns.changed,
+					removed = gitsigns.removed
 				}
-				return { fg = mode_color[vim.fn.mode()] or palette_colors.sakuraPink }
-			end,
-			-- padding = { right = 1 }
-		}
+			end
+		end
 
-		-- ins_left { 'location' }
-
-		ins_left {
-			'branch',
-			cond = conditions.check_git_workspace,
-			icon = '',
-			color = { fg = palette_colors.sakuraPink, gui = 'bold' },
-		}
-
-		ins_left {
-			'filename',
-			cond = conditions.buffer_not_empty,
-			color = { fg = palette_colors.oldWhite, gui = 'bold' },
-		}
-
-		ins_left {
-			'buffers',
-			color = { fg = palette_colors.sumiInk4, gui = 'italic' },
-		}
-		-- right items
-
-		ins_right {
-			'fileformat',
-			fmt = string.upper,
-			icons_enabled = true,
-			color = { fg = palette_colors.oldWhite, gui = 'bold' },
-		}
-
-		ins_right {
-			'diagnostics',
-			sources = { 'nvim_diagnostic' },
-			always_visible = true,
-			sections = { 'error', 'warn', 'hint' },
-			symbols = { error = '', warn = '', info = '', hint = '' },
-			diagnostics_color = {
-				error = { fg = palette_colors.sakuraPink },
-				warn = { fg = palette_colors.roninYellow },
-				info = { fg = palette_colors.waveBlue2 },
-				hint = { fg = palette_colors.springViolet2 },
+		local theme = require("kanagawa.colors").setup().theme
+		local kanagawa = {
+			normal = {
+				a = { bg = theme.syn.fun, fg = theme.ui.bg_p2, gui = 'bold' },
+				b = { bg = theme.ui.bg_p2, fg = theme.syn.fun },
+				c = { bg = theme.ui.bg_p2, fg = theme.ui.fg },
 			},
+			insert = {
+				a = { bg = theme.diag.ok, fg = theme.ui.bg_p2, gui = 'bold' },
+				b = { bg = theme.ui.bg_p2, fg = theme.diag.ok },
+			},
+			command = {
+				a = { bg = theme.syn.operator, fg = theme.ui.bg_p2, gui = 'bold' },
+				b = { bg = theme.ui.bg_p2, fg = theme.syn.operator },
+			},
+			visual = {
+				a = { bg = theme.syn.keyword, fg = theme.ui.bg_p2, gui = 'bold' },
+				b = { bg = theme.ui.bg_p2, fg = theme.syn.keyword },
+			},
+			replace = {
+				a = { bg = theme.syn.constant, fg = theme.ui.bg_p2, gui = 'bold' },
+				b = { bg = theme.ui.bg_p2, fg = theme.syn.constant },
+			},
+			inactive = {
+				a = { bg = theme.ui.bg_p2, fg = theme.ui.fg },
+				b = { bg = theme.ui.bg_p2, fg = theme.ui.fg },
+				c = { bg = theme.ui.bg_p2, fg = theme.ui.fg },
+			}
 		}
-		--
-		-- ins_right { 'filetype' }
 
-		-- ins_right {
-		--   'progress',
-		--   color = { fg = colors.fg, gui = 'bold' }
-		-- }
+		local empty = require('lualine.component'):extend()
+		function empty:draw(default_highlight)
+			self.status = ''
+			self.applied_separator = ''
+			self:apply_highlights(default_highlight)
+			self:apply_section_separators()
+			return self.status
+		end
 
-		-- ins_right {
-		--   function()
-		--     return os.date("%H:%M")
-		--   end,
-		--   color = { fg = colors.blue, gui = 'bold' }
-		-- }
+		-- Put proper separators and gaps between components in sections
+		local function process_sections(sections)
+			for name, section in pairs(sections) do
+				local left = name:sub(9, 10) < 'x'
 
-		ins_right {
-			function()
-				return '▊'
-			end,
-			color = { fg = palette_colors.oldWhite },
-			padding = { left = 1 },
-		}
+				local insert_color = { fg = theme.ui.bg, bg = theme.ui.bg }
+				local limit = (name ~= 'lualine_z') and #section or (#section - 1)
 
-		require('lualine').setup(config)
+				local insert_pos = 2
+				for idx, item in ipairs(section) do
+					if idx > limit then
+						break
+					end
+					if not item.ignore_separator then
+						table.insert(section, insert_pos, { empty, color = insert_color })
+						insert_pos = insert_pos + 2
+					else
+						insert_pos = insert_pos + 1
+					end
+				end
+				for id, comp in ipairs(section) do
+					if type(comp) ~= 'table' then
+						comp = { comp }
+						section[id] = comp
+					end
+					if not comp.ignore_separator then
+						comp.separator = left and { right = '' } or { left = '' }
+					end
+				end
+			end
+			return sections
+		end
+		require('lualine').setup({
+			options = {
+				icons_enabled = true,
+				theme = kanagawa,
+				component_separators = {},
+				section_separators = {},
+				disabled_filetypes = {
+					statusline = {},
+					winbar = {},
+				},
+				ignore_focus = {},
+				always_divide_middle = true,
+				always_show_tabline = true,
+				globalstatus = false,
+				refresh = {
+					statusline = 100,
+					tabline = 100,
+					winbar = 100,
+					refresh_time = 16, -- ~60fps
+					events = {
+						'WinEnter',
+						'BufEnter',
+						'BufWritePost',
+						'SessionLoadPost',
+						'FileChangedShellPost',
+						'VimResized',
+						'Filetype',
+						'CursorMoved',
+						'CursorMovedI',
+						'ModeChanged',
+					},
+				}
+			},
+			sections = process_sections {
+				lualine_a = {
+					{
+						'mode',
+					}
+				},
+				lualine_b = {
+
+					{
+						'filetype',
+						icon_only = true,
+						padding = { left = 1, right = 0 },
+						ignore_separator = true,
+					},
+					{
+						'filename',
+						padding = { left = 0, right = 1 },
+						symbols = {
+							modified = '[+]', -- Text to show when the file is modified.
+							readonly = '[-]', -- Text to show when the file is non-modifiable or readonly.
+							unnamed = ' [ ]', -- Text to show for unnamed buffers.
+							newfile = '[N]', -- Text to show for newly created file before first write
+						},
+					},
+					{
+						'branch',
+						icon = ''
+					},
+					{
+						'diff',
+						diff_color = {
+							added    = { bg = theme.ui.bg_p2, fg = theme.diag.ok },
+							modified = { bg = theme.ui.bg_p2, fg = theme.syn.constant },
+							removed  = { bg = theme.ui.bg_p2, fg = theme.vcs.removed },
+						},
+						source = diff_source,
+						symbols = { added = '+', modified = '~', removed = '-' },
+					},
+					{
+						'diagnostics',
+						update_in_insert = false,
+						sections = { 'error' },
+						diagnostics_color = { error = { bg = theme.vcs.removed, fg = theme.ui.bg_p2, gui = 'bold' } },
+						symbols = { error = ' ' },
+					},
+					{
+						'diagnostics',
+						update_in_insert = false,
+						sections = { 'warn' },
+						diagnostics_color = { warn = { bg = theme.diag.warning, fg = theme.ui.bg_p2, gui = 'bold' } },
+						symbols = { warn = ' ' },
+					},
+					{
+						'diagnostics',
+						update_in_insert = false,
+						sections = { 'hint' },
+						diagnostics_color = { hint = { bg = theme.diag.hint, fg = theme.ui.bg_p2, gui = 'bold' } },
+						symbols = { hint = '󰛩 ' },
+					},
+					{
+						'diagnostics',
+						update_in_insert = false,
+						sections = { 'info' },
+						diagnostics_color = { info = { bg = theme.diag.info, fg = theme.ui.bg_p2, gui = 'bold' } },
+						symbols = { info = '󰋼 ' },
+					},
+				},
+				lualine_c = {
+				},
+				lualine_x = {
+					{
+						'fileformat',
+						cond = function() return false end
+					},
+				},
+				lualine_y = {
+					{
+						'selectioncount',
+					},
+					{
+						'searchcount',
+						maxcount = 999,
+						timeout = 500,
+					},
+					{
+						'progress'
+					},
+				},
+				lualine_z = { 'location' }
+			},
+			inactive_sections = process_sections {
+				lualine_a = {
+					{
+						'filetype',
+						icon_only = true,
+						padding = { left = 1, right = 0 },
+						ignore_separator = true,
+					},
+					{
+						'filename',
+						padding = { left = 0, right = 1 },
+						symbols = {
+							modified = '[+]', -- Text to show when the file is modified.
+							readonly = '[-]', -- Text to show when the file is non-modifiable or readonly.
+							unnamed = ' [ ]', -- Text to show for unnamed buffers.
+							newfile = '[N]', -- Text to show for newly created file before first write
+						},
+					},
+				},
+				lualine_b = {},
+				lualine_c = {},
+				lualine_x = {
+					{
+						'fileformat',
+						cond = function() return false end
+					},
+				},
+				lualine_y = {},
+				lualine_z = { 'location' },
+			},
+			tabline = {},
+			winbar = {},
+			inactive_winbar = {},
+			extensions = {}
+		})
 	end,
 }
