@@ -4,12 +4,6 @@ return {
 	order = 600,
 	dependencies = { 'nvim-tree/nvim-web-devicons' },
 	config = function()
-		vim.g.kanagawa_lualine_bold = true
-		-- local spinners = { "", "󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥", "" }
-		-- local lsp = (vim.o.columns > 100 and "   LSP ~ " .. client.name .. " ") or "   LSP "
-		-- local file_icon = "󰈚"
-		-- local cursor = "%#St_pos_sep#" .. sep_l .. "%#St_pos_icon# %#St_pos_text# %l/%v "
-		-- local folder_icon = "%#St_cwd_icon#" .. "󰉋 "
 		local function diff_source()
 			local gitsigns = vim.b.gitsigns_status_dict
 			if gitsigns then

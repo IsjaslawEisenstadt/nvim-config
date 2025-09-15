@@ -1,6 +1,6 @@
 return {
 	'natecraddock/sessions.nvim',
-	enabled = true,
+	enabled = false,
 	config = function()
 		local sessions = require('sessions')
 		sessions.setup({
@@ -9,7 +9,8 @@ return {
 			-- the default is to only save session files before exiting nvim.
 			-- you may wish to also save more frequently by adding "BufEnter" or any
 			-- other autocmd event
-			events = { "VimLeavePre" },
+			events = { 'User' },
+			-- events = { "VimLeavePre" },
 
 			-- default session filepath
 			--
@@ -23,5 +24,11 @@ return {
 		})
 		vim.keymap.set('n', '<leader>wb', function() sessions.stop_autosave({ save = false }) end,
 			{ desc = 'Stop Session Autosave' })
+		vim.api.nvim_create_autocmd('VimLeavePre', {
+			callback = function()
+				vim.cmd("Neotree close")
+				sessions.stop_autosave({ save = sessions.recording() })
+			end
+		})
 	end
 }

@@ -1,0 +1,190 @@
+-- vim.lsp.stop_client(vim.lsp.get_clients())
+
+
+-- local function print_table(t, indent)
+-- 	indent = indent or 0
+-- 	local spacing = string.rep("  ", indent)
+--
+-- 	for key, value in pairs(t) do
+-- 		if type(value) == "table" then
+-- 			vim.notify(spacing .. tostring(key) .. ":")
+-- 			printTable(value, indent + 1)
+-- 		elseif type(value) == 'function' then
+-- 			vim.notify('func')
+-- 		else
+-- 			vim.notify(spacing .. tostring(key) .. ": " .. tostring(value))
+-- 		end
+-- 	end
+-- end
+--
+-- local function roslyn_handlers()
+-- 	return {
+-- 		['workspace/projectInitializationComplete'] = function(_, _, ctx)
+-- 			vim.notify('[LSP] Roslyn project initialization complete', vim.log.levels.INFO, { title = 'roslyn_ls' })
+--
+-- 			local buffers = vim.lsp.get_buffers_by_client_id(ctx.client_id)
+-- 			local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
+-- 			for _, buf in ipairs(buffers) do
+-- 				client:request(vim.lsp.protocol.Methods.textDocument_diagnostic, {
+-- 					textDocument = vim.lsp.util.make_text_document_params(buf),
+-- 				}, nil, buf)
+-- 			end
+-- 		end,
+-- 		['workspace/_roslyn_projectHasUnresolvedDependencies'] = function()
+-- 			vim.notify('[LSP] Detected missing dependencies. Run `dotnet restore` command.', vim.log.levels.ERROR, {
+-- 				title = 'roslyn_ls',
+-- 			})
+-- 			return vim.NIL
+-- 		end,
+-- 		['workspace/_roslyn_projectNeedsRestore'] = function(_, result, ctx)
+-- 			local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
+--
+-- 			vim.notify('[LSP] project needs restore')
+--
+-- 			-- result.projectFilePaths = { 'C:\\workspace\\unity\\CsTest\\CsTest.sln' }
+-- 			result.projectFilePaths = {}
+--
+-- 			client:request('workspace/_roslyn_restore', result, function(err, response)
+-- 				if err then
+-- 					vim.notify('[LSP] ERR: ' .. err.message, vim.log.levels.ERROR, { title = 'roslyn_ls' })
+-- 				end
+-- 				if response then
+-- 					for _, v in ipairs(response) do
+-- 						vim.notify('[LSP] MSG: ' .. v.message, vim.log.levels.INFO, { title = 'roslyn_ls' })
+-- 					end
+-- 				end
+-- 			end)
+--
+-- 			return vim.NIL
+-- 		end,
+-- 		['razor/provideDynamicFileInfo'] = function(_, _, _)
+-- 			vim.notify(
+-- 				'[LSP] Razor is not supported.\nPlease use https://github.com/tris203/rzls.nvim',
+-- 				vim.log.levels.WARN,
+-- 				{ title = 'roslyn_ls' }
+-- 			)
+-- 			return vim.NIL
+-- 		end,
+-- 	}
+-- end
+--
+-- vim.lsp.config('roslyn', {
+-- 	name = 'roslyn_ls',
+-- 	offset_encoding = 'utf-8',
+-- 	cmd = {
+-- 		"dotnet",
+-- 		"D:/apps/CsLsp/Microsoft.CodeAnalysis.LanguageServer.dll",
+-- 		"--logLevel=Information",
+-- 		"--extensionLogDirectory=" .. vim.fs.dirname(vim.lsp.get_log_path()),
+-- 		"--stdio",
+-- 	},
+-- 	filetypes = { 'cs' },
+-- 	handlers = roslyn_handlers(),
+-- 	root_dir = function(bufnr, success_callback)
+-- 		local bufname = vim.api.nvim_buf_get_name(bufnr)
+-- 		-- ignore decompiled source files, which roslyn stores in the following path on windows
+-- 		local temp_dir = vim.fn.expand('~/AppData/Local/Temp/MetadataAsSource')
+-- 		if not vim.startswith(bufname, temp_dir) then
+-- 			-- first try to find a parent directory containing a solution file
+-- 			local root_dir = vim.fs.root(bufnr, function(fname, _)
+-- 				return fname:match('%.sln$') ~= nil
+-- 			end)
+--
+-- 			-- otherwise try to find a parent directory containing a project file
+-- 			if not root_dir then
+-- 				root_dir = vim.fs.root(bufnr, function(fname, _)
+-- 					return fname:match('%.csproj$') ~= nil
+-- 				end)
+-- 			end
+--
+-- 			if root_dir then
+-- 				vim.notify('[LSP] root_dir (' .. root_dir .. ') match for: ' .. bufname)
+-- 				success_callback(root_dir)
+-- 			else
+-- 				vim.notify('[LSP] failed to find root_dir for: ' .. bufname)
+-- 			end
+-- 		end
+-- 	end,
+-- 	on_init = {
+-- 		function(client)
+-- 			vim.notify('[LSP] on_init with root_dir: ' .. client.config.root_dir)
+--
+-- 			-- try to load the first solution file we find
+-- 			for entry, type in vim.fs.dir(client.config.root_dir) do
+-- 				if type == 'file' and vim.endswith(entry, '.sln') then
+-- 					local target = vim.fs.joinpath(client.config.root_dir, entry)
+-- 					vim.notify('[LSP] init solution: ' .. vim.uri_from_fname(target), vim.log.levels.INFO,
+-- 						{ title = 'roslyn_ls' })
+-- 					client:notify('solution/open', {
+-- 						solution = vim.uri_from_fname(target),
+-- 					})
+-- 					return
+-- 				end
+-- 			end
+--
+-- 			-- if no solution file was found load all the project files we can find
+-- 			for entry, type in vim.fs.dir(client.config.root_dir) do
+-- 				if type == 'file' and vim.endswith(entry, '.csproj') then
+-- 					local target = vim.fs.joinpath(client.config.root_dir, entry)
+-- 					vim.notify('[LSP] init project: ' .. target, vim.log.levels.INFO, { title = 'roslyn_ls' })
+-- 					client:notify('project/open', {
+-- 						projects = { vim.uri_from_fname(file) },
+-- 					})
+-- 				end
+-- 			end
+-- 		end,
+-- 	},
+-- 	settings = {
+-- 		['csharp|background_analysis'] = {
+-- 			dotnet_analyzer_diagnostics_scope = 'fullSolution',
+-- 			dotnet_compiler_diagnostics_scope = 'fullSolution',
+-- 		},
+-- 		['csharp|inlay_hints'] = {
+-- 			csharp_enable_inlay_hints_for_implicit_object_creation = true,
+-- 			csharp_enable_inlay_hints_for_implicit_variable_types = true,
+-- 			csharp_enable_inlay_hints_for_lambda_parameter_types = true,
+-- 			csharp_enable_inlay_hints_for_types = true,
+-- 			dotnet_enable_inlay_hints_for_indexer_parameters = true,
+-- 			dotnet_enable_inlay_hints_for_literal_parameters = true,
+-- 			dotnet_enable_inlay_hints_for_object_creation_parameters = true,
+-- 			dotnet_enable_inlay_hints_for_other_parameters = true,
+-- 			dotnet_enable_inlay_hints_for_parameters = true,
+-- 			dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
+-- 			dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
+-- 			dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
+-- 		},
+-- 		['csharp|symbol_search'] = {
+-- 			dotnet_search_reference_assemblies = true,
+-- 		},
+-- 		['csharp|completion'] = {
+-- 			dotnet_show_name_completion_suggestions = true,
+-- 			dotnet_show_completion_items_from_unimported_namespaces = true,
+-- 			dotnet_provide_regex_completions = true,
+-- 		},
+-- 		['csharp|code_lens'] = {
+-- 			dotnet_enable_references_code_lens = true,
+-- 		},
+-- 	},
+-- 	-- TODO: figure out what this actually does and if it's needed... so far everything works better without
+-- 	-- capabilities = {
+-- 	-- 	-- HACK Doesn't show any diagnostics if we do not set this to true
+-- 	-- 	textDocument = {
+-- 	-- 		diagnostic = {
+-- 	-- 			dynamicRegistration = true,
+-- 	-- 		},
+-- 	-- 	},
+-- 	-- },
+-- })
+
+-- vim.lsp.config('roslyn', {
+-- 	name = 'roslyn_ls',
+-- 	cmd = {
+-- 		"dotnet",
+-- 		"D:/apps/CsLsp/Microsoft.CodeAnalysis.LanguageServer.dll",
+-- 		"--logLevel=Information",
+-- 		"--extensionLogDirectory=" .. vim.fs.dirname(vim.lsp.get_log_path()),
+-- 		"--stdio",
+-- 	},
+-- })
+
+-- vim.lsp.enable('roslyn')

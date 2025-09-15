@@ -1,6 +1,6 @@
 return {
 	'VidocqH/lsp-lens.nvim',
-	enabled = true,
+	enabled = false,
 	config = function()
 		local SymbolKind = vim.lsp.protocol.SymbolKind
 

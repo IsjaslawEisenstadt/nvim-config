@@ -59,7 +59,7 @@ return {
 				Paste_mapping = "P",
 			},
 			undo = {
-				enabled = true,
+				enabled = false,
 
 				default_animation = {
 					name = "fade",
@@ -74,7 +74,7 @@ return {
 				undo_mapping = "u",
 			},
 			redo = {
-				enabled = true,
+				enabled = false,
 
 				default_animation = {
 					name = "fade",

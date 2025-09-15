@@ -6,7 +6,10 @@ require 'autocmds'
 
 require 'usercmds'
 
+require 'roslyn'
 -- require 'win_manager'
+
+require 'sessions'
 
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46_cache/"
 
@@ -127,36 +130,18 @@ end
 --
 --
 
-vim.lsp.config("roslyn", {
-	cmd = {
-		"dotnet",
-		"D:/apps/CsLsp/Microsoft.CodeAnalysis.LanguageServer.dll",
-		"--logLevel=Information",
-		"--extensionLogDirectory=" .. vim.fs.dirname(vim.lsp.get_log_path()),
-		"--stdio",
-	},
-	settings = {
-		["csharp|inlay_hints"] = {
-			csharp_enable_inlay_hints_for_implicit_object_creation = true,
-			csharp_enable_inlay_hints_for_implicit_variable_types = true,
-		},
-		["csharp|code_lens"] = {
-			dotnet_enable_references_code_lens = true,
-		},
-	},
-})
 
-vim.api.nvim_create_autocmd('LspAttach', {
-	callback = function(args)
-		local bufnr = args.buf
-		local client = vim.lsp.get_client_by_id(args.data.client_id)
-
-		if client and client:supports_method 'textDocument/codeLens' then
-			vim.lsp.codelens.refresh()
-			vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
-				buffer = bufnr,
-				callback = vim.lsp.codelens.refresh,
-			})
-		end
-	end,
-})
+-- vim.api.nvim_create_autocmd('LspAttach', {
+-- 	callback = function(args)
+-- 		local bufnr = args.buf
+-- 		local client = vim.lsp.get_client_by_id(args.data.client_id)
+--
+-- 		if client and client:supports_method 'textDocument/codeLens' then
+-- 			vim.lsp.codelens.refresh()
+-- 			vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
+-- 				buffer = bufnr,
+-- 				callback = vim.lsp.codelens.refresh,
+-- 			})
+-- 		end
+-- 	end,
+-- })

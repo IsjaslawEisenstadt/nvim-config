@@ -28,6 +28,11 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- Paste without losing the register
 vim.keymap.set('x', '<leader>p', '"_dP')
 
+vim.keymap.set('n', '<CR>', 'o<Esc>')
+vim.keymap.set('n', '<S-CR>', 'O<Esc>')
+vim.keymap.set('n', '<BS>', 'ddk')
+vim.keymap.set('n', '<S-BS>', 'kdd')
+
 -- Term Toggle Function
 local term_buf = nil
 local term_win = nil
@@ -73,7 +78,7 @@ vim.keymap.set('i', '<A-c>', '<Esc>:lua TermClose()<CR>', { desc = '[C]lose [T]e
 vim.keymap.set('t', '<A-c>', '<C-\\><C-n>:lua TermClose()<CR>', { desc = '[T]oggle [T]erminal', silent = true })
 
 -- color picker
--- vim.keymap.set('n', '<leader>cc', '<cmd>CccPick<cr>', { desc = '[C]olor pick', silent = true })
+vim.keymap.set('n', '<leader>cc', '<cmd>CccPick<cr>', { desc = '[C]olor pick', silent = true })
 
 vim.keymap.set({ 'n', 'x' }, '<leader>ca', function()
 	require('tiny-code-action').code_action {}

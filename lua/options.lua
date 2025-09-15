@@ -1,34 +1,54 @@
 if vim.g.neovide then
 	vim.o.guifont = 'FiraCode Nerd Font:h10'
-	vim.opt.linespace = 1
+	vim.opt.linespace = 0
 
-	vim.g.neovide_padding_top = 5
+	vim.g.neovide_scale_factor = 1.0
+	vim.g.neovide_text_gamma = 0.0
+	vim.g.neovide_text_contrast = 0.5
+
+	vim.g.neovide_padding_top = 0
 	vim.g.neovide_padding_bottom = 0
-	vim.g.neovide_padding_right = 5
-	vim.g.neovide_padding_left = 5
+	vim.g.neovide_padding_right = 0
+	vim.g.neovide_padding_left = 0
 
-	-- vim.g.neovide_opacity = 0.55
+	vim.g.neovide_opacity = 1.0
 	vim.g.neovide_normal_opacity = 1.0
 
-	-- vim.g.neovide_title_background_color = '#22272E'
-	-- vim.g.neovide_title_text_color = 'white'
-	-- vim.g.neovide_window_blurred = true
+	vim.g.neovide_title_background_color = '#1F1F28'
+	vim.g.neovide_title_text_color = '#DCD7BA'
+	vim.g.neovide_window_blurred = false
 
-	vim.g.neovide_cursor_animation_length = 0.150
-	vim.g.neovide_cursor_trail_size = 0.2
-	vim.g.neovide_scroll_animation_length = 0.1
 	vim.g.neovide_scroll_animation_far_lines = 0
+	vim.g.neovide_scroll_animation_length = 0.1
+	vim.g.neovide_position_animation_length = 0.1
 
+	vim.g.neovide_cursor_animation_length = 0.1
+	vim.g.neovide_cursor_trail_size = 0.05
+	vim.g.neovide_cursor_short_animation_length = 0.04
+	vim.g.neovide_cursor_animate_in_insert_mode = true
+	vim.g.neovide_cursor_animate_command_line = true
+	vim.g.neovide_cursor_antialiasing = true
+
+	vim.g.neovide_floating_corner_radius = 0.0
 	vim.g.neovide_floating_shadow = true
 	vim.g.neovide_floating_z_height = 5
 	vim.g.neovide_light_angle_degrees = 45
 	vim.g.neovide_light_radius = 5
-
-	vim.g.neovide_floating_corner_radius = 0.0
+	vim.g.neovide_floating_blur_amount_x = 2.0
+	vim.g.neovide_floating_blur_amount_y = 2.0
 
 	vim.g.neovide_hide_mouse_when_typing = true
 
 	vim.g.neovide_underline_stroke_scale = 3.0
+	vim.g.neovide_cursor_unfocused_outline_width = 0.125
+
+	vim.g.experimental_layer_grouping = false
+	vim.g.neovide_confirm_quit = true
+	vim.g.neovide_refresh_rate = 160
+	vim.g.neovide_refresh_rate_idle = 5
+	vim.g.neovide_no_idle = false
+	vim.g.neovide_remember_window_size = true
+	vim.g.neovide_profiler = false
 end
 
 vim.g.mapleader = ' '
@@ -139,3 +159,5 @@ vim.o.laststatus = 2
 vim.opt.whichwrap:append "<>[]hl"
 
 -- vim.o.cmdheight = 30
+
+vim.o.sessionoptions = 'folds,help,tabpages,winsize,terminal'

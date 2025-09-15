@@ -1,37 +1,16 @@
-nvui:
-+ get chadrc.lua to work
-* treesitter nvui cfg
-- lspconfig nvui cfg
-+ fix squigglys
-+ fix tiny-inline-diagnostics
-+ fix minty or go back to ccc
-+ set up NvDash
-+ customize stl
+* treesitter cfg
+- lspconfig cfg
 * test lsp signature
 - fix lsp renamer
-- add cmp styles
-- themepicker bind (also fix error on confirm)
-- theme toggler bind
-~ cheatsheet [MEH... disable/ignore?]
-- gitsigns nvui cfg
-- telescope nvui cfg
-+ disable/customize bufline
+- add blink styles
 
 Kanagawa:
-- fix gutter icon bg
++ fix gutter icon bg
 - fix ibl thickness
 - fix TMP_Text type wrong color
 - fix C# parens/braces color
 - fix c ptr variable name color
 - change which-key color scheme, red font is distracting
-
-Statusline:
-- mode
-- filename
-- number of diagnostics
-- connected LSP
-- cwd dir
-- git branch, additions
 
 - Dashboard
 
@@ -58,6 +37,8 @@ tiny-glimmer:
 - try out harpoon
 
 - write shada.X cleanup tool
+
+- show lsp status in each buffer instead of btm left
 
 - nvim-cmp cmdline:
 

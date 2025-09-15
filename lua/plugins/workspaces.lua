@@ -51,22 +51,29 @@ return {
 				remove = {},
 				rename = {},
 				open_pre = {
+					"Neotree close",
+
 					-- If recording, save current session state and stop recording
-					"SessionsStop",
+					function()
+						if _G.sessions_recording() then
+							_G.sessions_save()
+							_G.sessions_stop_autosave()
+						end
+					end,
 
 					-- delete all buffers (does not save changes)
 					"silent %bdelete!",
 				},
 				open = function()
-					local sessions = require 'sessions'
-					if not sessions.load(nil, { silent = true }) then
-						sessions.save()
+					if not _G.sessions_load() then
+						_G.sessions_save()
 					end
-					-- vim.cmd('Telescope find_files')
+					_G.sessions_start_autosave()
+					-- vim.schedule(function() vim.cmd('Neotree') end)
 				end,
 			}
 		})
-		require('telescope').load_extension("workspaces")
+		require('telescope').load_extension('workspaces')
 		vim.keymap.set('n', '<leader>ws', '<cmd>Telescope workspaces<CR>', { desc = '[S]earch' })
 		vim.keymap.set('n', '<leader>wa', '<cmd>WorkspacesAdd<CR>', { desc = '[A]dd' })
 		vim.keymap.set('n', '<leader>wr', '<cmd>WorkspacesRemove<CR>', { desc = '[R]emove' })

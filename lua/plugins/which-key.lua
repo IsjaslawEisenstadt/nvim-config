@@ -6,7 +6,7 @@ return {
 		preset = "classic",
 		-- Delay before showing the popup. Can be a number or a function that returns a number.
 		delay = function(ctx)
-			return ctx.plugin and 0 or 200
+			return ctx.plugin and 0 or 0
 		end,
 		filter = function(mapping)
 			-- example to exclude mappings without a description

@@ -12,34 +12,25 @@
 -- })
 
 -- Auto equalize window sizes whenever vim is resized
-vim.api.nvim_create_autocmd("VimResized", {
+-- vim.api.nvim_create_autocmd("VimResized", {
+-- 	callback = function()
+-- 		vim.cmd("wincmd =")
+-- 	end,
+-- })
+
+vim.api.nvim_create_autocmd({ 'LspAttach', 'LspNotify' }, {
+	pattern = "*",
 	callback = function()
-		vim.cmd("wincmd =")
-	end,
-})
-
--- TODO: figure out what this does, lol
-vim.api.nvim_create_autocmd({ "UIEnter", "BufReadPost", "BufNewFile" }, {
-	group = vim.api.nvim_create_augroup("NvFilePost", { clear = true }),
-	callback = function(args)
-		local file = vim.api.nvim_buf_get_name(args.buf)
-		local buftype = vim.api.nvim_get_option_value("buftype", { buf = args.buf })
-
-		if not vim.g.ui_entered and args.event == "UIEnter" then
-			vim.g.ui_entered = true
+		local clients = vim.lsp.get_clients({ name = "roslyn" })
+		if not clients or #clients == 0 then
+			return
 		end
 
-		if file ~= "" and buftype ~= "nofile" and vim.g.ui_entered then
-			vim.api.nvim_exec_autocmds("User", { pattern = "FilePost", modeline = false })
-			vim.api.nvim_del_augroup_by_name "NvFilePost"
-
-			vim.schedule(function()
-				vim.api.nvim_exec_autocmds("FileType", {})
-
-				if vim.g.editorconfig then
-					require("editorconfig").config(args.buf)
-				end
-			end)
+		local client = assert(vim.lsp.get_client_by_id(clients[1].id))
+		local buffers = vim.lsp.get_buffers_by_client_id(clients[1].id)
+		for _, buf in ipairs(buffers) do
+			local params = { textDocument = vim.lsp.util.make_text_document_params(buf) }
+			client:request("textDocument/diagnostic", params, nil, buf)
 		end
 	end,
 })
